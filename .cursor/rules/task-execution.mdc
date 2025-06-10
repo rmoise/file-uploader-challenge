@@ -79,17 +79,17 @@ Build a React file uploader with queue management, Shopify Polaris UI, and retry
 
 ### **PHASE 4: UPLOAD LOGIC** (18-28 minutes)
 
-#### **Task 4.1: Create Mock Upload Service** (3 minutes)
-- [ ] Implement `uploadFile` function in `src/services/uploadService.ts`
-- [ ] Simulate progress updates
-- [ ] Add random success/failure (80% success rate)
-- [ ] Return Promise-based API
+#### **Task 4.1: Create Mock Upload Service** (3 minutes) ✅ COMPLETE
+- [x] Implement `uploadFile` function in `src/services/uploadService.ts`
+- [x] Simulate progress updates
+- [x] Add random success/failure (80% success rate)
+- [x] Return Promise-based API
 
-#### **Task 4.2: Build Upload Queue Hook** (5 minutes)
-- [ ] Create `useUploadQueue` hook in `src/hooks/useUploadQueue.ts`
-- [ ] Implement queue state management
-- [ ] Add concurrent upload limiting (MAX_CONCURRENT = 2)
-- [ ] Handle upload progress updates
+#### **Task 4.2: Build Upload Queue Hook** (5 minutes) ✅ COMPLETE
+- [x] Create `useUploadQueue` hook in `src/hooks/useUploadQueue.ts`
+- [x] Implement queue state management
+- [x] Add concurrent upload limiting (MAX_CONCURRENT = 2)
+- [x] Handle upload progress updates
 
 #### **Task 4.3: Create FileQueue Component** (2 minutes)
 - [ ] Display list of files in queue
