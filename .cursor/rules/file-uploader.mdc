@@ -1,0 +1,392 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# File Uploader Project - Cursor Rules & Context (PRC)
+
+## Project Rule Context (PRC)
+
+### Project Constraints
+- **Time Limit**: 30-45 minutes maximum
+- **Client**: Upwork challenge for Charles
+- **Success Criteria**: Working demo + GitHub repo + deployment
+- **Previous Failure Rate**: 64/65 candidates failed this challenge
+- **Mandatory Requirement**: Shopify Polaris UI (non-negotiable)
+
+### Technology Stack
+- **Frontend**: React 18+ with TypeScript
+- **Build Tool**: Vite
+- **UI Framework**: Shopify Polaris (MANDATORY)
+- **State Management**: React hooks only (useState, useEffect)
+- **File API**: HTML5 File API with drag/drop
+- **Deployment**: Vercel (fastest option)
+- **Version Control**: Git with descriptive commits
+
+### Code Standards & Conventions
+- **Language**: TypeScript strict mode
+- **Naming**: camelCase for variables, PascalCase for components
+- **File Structure**: Feature-based organization with separation of concerns
+- **Imports**: Absolute imports preferred, group by type (React, libraries, local)
+- **Error Handling**: Try-catch with user-friendly messages
+- **No External Libraries**: Except Polaris (keep dependencies minimal)
+
+### DRY (Don't Repeat Yourself) Principles
+- **Shared Logic**: Extract common functionality into custom hooks
+- **Reusable Components**: Create generic UI components in `/ui` folder
+- **Constants**: Centralize configuration values and magic numbers
+- **Utilities**: Share common functions across components
+- **Types**: Define interfaces once, import everywhere
+- **Validation**: Single source of truth for file validation rules
+
+### Clean Code Patterns
+- **Single Responsibility**: Each component/hook has one clear purpose
+- **Composition over Inheritance**: Favor component composition
+- **Pure Functions**: Minimize side effects in utility functions
+- **Descriptive Naming**: Function names explain what they do
+- **Small Functions**: Max 20-30 lines per function
+- **Error Boundaries**: Wrap components in error handling
+
+## Project Overview
+
+Build a React file uploader with queue management, Shopify Polaris UI, and retry logic in 30-45 minutes.
+
+## Priority Order (CRITICAL - Follow this sequence)
+
+1. **Setup Polaris & Basic Structure** (5-8 mins)
+2. **File Drop Zone & Selection** (8-12 mins)
+3. **Upload Queue Management** (10-15 mins)
+4. **Retry Logic & Error Handling** (5-8 mins)
+5. **UI Polish & Testing** (5-10 mins)
+
+## Technical Requirements
+
+- React TypeScript with Vite
+- Shopify Polaris UI (MANDATORY)
+- Max 2-3 concurrent uploads
+- Drag & drop for multiple files
+- Retry failed uploads
+- Show upload progress/status
+- Deploy ready code
+
+## Development Rules
+
+### 1. Polaris Integration
+
+- Install: `@shopify/polaris` immediately
+- Use Polaris components ONLY for UI
+- Import AppProvider, Card, Stack, Button, ProgressBar, Text
+- Use Polaris design tokens for consistency
+
+### 2. File Upload Architecture
+
+```typescript
+interface FileUploadItem {
+  id: string;
+  file: File;
+  status: "pending" | "uploading" | "completed" | "failed";
+  progress: number;
+  retryCount: number;
+  error?: string;
+}
+```
+
+### 3. Queue Management Strategy
+
+- Use a custom hook `useUploadQueue`
+- Maintain concurrent upload limit (MAX_CONCURRENT = 2)
+- Process queue with Promise-based uploads
+- Auto-retry failed uploads (max 3 attempts)
+
+### 4. Code Implementation Priorities
+
+#### FIRST: Basic Setup (5 mins)
+
+```bash
+npm install @shopify/polaris
+```
+
+- Wrap App with Polaris AppProvider
+- Create basic layout with Card components
+
+#### SECOND: File Drop Component (10 mins)
+
+- Use HTML5 drag/drop API
+- Accept multiple files
+- Add to upload queue immediately
+- Show file list with Polaris components
+
+#### THIRD: Upload Queue Hook (15 mins)
+
+```typescript
+const useUploadQueue = () => {
+  const [files, setFiles] = useState<FileUploadItem[]>([]);
+  const [uploading, setUploading] = useState<Set<string>>(new Set());
+
+  const processQueue = async () => {
+    // Limit concurrent uploads to 2-3
+    // Process pending files
+    // Handle retries
+  };
+};
+```
+
+#### FOURTH: Upload Service (5 mins)
+
+- Mock upload function (returns Promise)
+- Simulate progress updates
+- Random success/failure for testing
+- Use setTimeout to simulate network delay
+
+### 5. Polaris Components to Use
+
+- `AppProvider` - Root wrapper
+- `Page` - Main page container
+- `Card` - File upload area and file list
+- `Stack` - Layout components
+- `Button` - Upload actions
+- `ProgressBar` - Upload progress
+- `Text` - Status messages
+- `Banner` - Error messages
+
+### 6. File Upload Flow
+
+1. User drops files → Add to queue as 'pending'
+2. Auto-start upload processing
+3. Take max 2-3 files from pending → Set to 'uploading'
+4. Upload files concurrently with progress updates
+5. On completion → Set to 'completed'
+6. On failure → Set to 'failed', increment retryCount
+7. Auto-retry failed files (max 3 times)
+8. Continue until queue is empty
+
+### 7. State Management (Keep Simple)
+
+- Use useState for file queue
+- Use useEffect for queue processing
+- No external state management (too complex for timeframe)
+
+### 8. Mock Upload Implementation
+
+```typescript
+const uploadFile = async (
+  file: File,
+  onProgress: (progress: number) => void
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      onProgress(progress);
+      if (progress >= 100) {
+        clearInterval(interval);
+        // 80% success rate for testing
+        Math.random() > 0.2 ? resolve() : reject(new Error("Upload failed"));
+      }
+    }, 200);
+  });
+};
+```
+
+### 9. GitHub + Vercel Deployment Strategy (4 mins max)
+
+#### Step 1: GitHub Setup (2 mins)
+```bash
+# Initialize and push to GitHub
+git init
+git add .
+git commit -m "feat: file uploader with queue management and retry logic"
+
+# Create repo on github.com (if not done)
+# Then push:
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/file-uploader-challenge.git
+git push -u origin main
+```
+
+#### Step 2: Vercel Deployment (2 mins)
+1. Go to **vercel.com** → Sign in with GitHub
+2. Click **"New Project"**
+3. **Import** your `file-uploader-challenge` repo
+4. **Project Settings**:
+   - Framework Preset: **Vite** (auto-detected)
+   - Build Command: `npm run build` (auto-filled)
+   - Output Directory: `dist` (auto-filled)
+5. Click **"Deploy"** → Wait ~60 seconds
+6. **Copy the live URL** for Charles
+
+#### Step 3: Verify Deployment (30 seconds)
+- [ ] Vercel URL loads correctly
+- [ ] Polaris styles render properly
+- [ ] Drag & drop works on live site
+- [ ] Upload queue functions properly
+
+#### Vercel Configuration (automatic with Vite)
+```json
+// vercel.json (only if needed)
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install"
+}
+```
+
+#### Pre-Deployment Checklist (1 min)
+- [ ] `npm run build` works locally
+- [ ] No TypeScript errors
+- [ ] Polaris styles loading correctly
+- [ ] File upload simulation working
+- [ ] Drag/drop functional in build
+
+#### Common Deployment Issues & Fixes
+```typescript
+// vite.config.ts - Add if deployment issues
+export default defineConfig({
+  plugins: [react()],
+  base: '/', // Ensure correct asset paths
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false // Faster builds
+  }
+})
+```
+
+#### Polaris CSS Import Fix (if needed)
+```typescript
+// main.tsx - Ensure Polaris styles load
+import '@shopify/polaris/build/esm/styles.css';
+import { AppProvider } from '@shopify/polaris';
+```
+
+### 10. Time Allocation Breakdown (GitHub + Vercel)
+
+- **0-8 mins**: Polaris setup + basic layout
+- **8-18 mins**: File drop zone + queue structure
+- **18-28 mins**: Upload processing + concurrency
+- **28-35 mins**: Retry logic + error handling
+- **35-40 mins**: UI polish + local testing
+- **40-42 mins**: Push to GitHub repo
+- **42-44 mins**: Deploy via Vercel
+- **44-45 mins**: Live testing + send to Charles
+
+## Critical Success Factors
+
+1. **Use Polaris from start** - Don't build custom UI
+2. **Mock uploads first** - Don't spend time on real backend
+3. **Focus on queue logic** - This is the core requirement
+4. **Test with many files** - Ensure concurrency works
+5. **Keep it simple** - Avoid over-engineering
+
+## Trade-offs to Document
+
+- Mock uploads vs real S3 integration
+- Simple retry logic vs exponential backoff
+- Basic progress indication vs detailed analytics
+- Limited error handling vs comprehensive logging
+
+## Code Quality Rules
+
+- Use TypeScript interfaces for type safety
+- Extract custom hooks for reusability
+- Keep components small and focused
+- Use descriptive variable names
+- Add basic error boundaries
+
+## File Structure Guidelines (Optimized for 30-45 mins)
+```
+src/
+├── components/
+│   ├── FileUploader.tsx     # Main container (ALL-IN-ONE approach)
+│   ├── FileDropZone.tsx     # Drag & drop area
+│   ├── FileQueue.tsx        # Queue display + FileItem logic
+│   └── FileItem.tsx         # Individual file row
+├── hooks/
+│   ├── useUploadQueue.ts    # Queue + upload logic combined
+│   └── useDragAndDrop.ts    # Drag & drop functionality
+├── services/
+│   └── uploadService.ts     # Mock upload API only
+├── types/
+│   └── upload.ts            # ALL types in one file
+├── constants.ts             # ALL constants in one file
+└── App.tsx                  # Polaris AppProvider setup
+```
+
+### Simplified Architecture (Speed-focused)
+```
+FileUploader (Container - everything here)
+├── FileDropZone (Drop area)
+├── FileQueue (List + items)
+└── Direct Polaris components (no custom UI)
+```
+
+### DRY Principles (Time-Optimized)
+- **Single hook** for queue management + uploads
+- **One types file** for all interfaces
+- **One constants file** for all config
+- **Polaris components only** (no custom StatusBadge/ProgressBar)
+- **Inline small functions** rather than separate utils
+
+## Acceptance Criteria
+- [ ] Drag & drop works with multiple files
+- [ ] Queue shows max 2-3 concurrent uploads
+- [ ] Failed uploads auto-retry (max 3 attempts)
+- [ ] Polaris UI components used throughout
+- [ ] Progress indicators for each file
+- [ ] Clean, readable TypeScript code
+- [ ] Deployed and accessible online
+- [ ] GitHub repo with clear commits
+
+## Testing Strategy (Last 5 mins)
+
+### Local Testing (3 mins)
+- Test with 10+ files
+- Verify max 2-3 concurrent uploads
+- Test retry on failure
+- Confirm UI responsiveness
+- Test drag & drop functionality
+
+### Live Deployment Testing (2 mins)
+- [ ] Vercel URL loads correctly
+- [ ] Polaris styles render properly
+- [ ] Drag & drop works on live site
+- [ ] Queue management functions
+- [ ] Mobile responsive (quick check)
+- [ ] Performance acceptable (< 3s load)
+
+## Success Metrics
+- **Functional**: All requirements working
+- **Code Quality**: Clean, maintainable TypeScript
+- **Performance**: Responsive UI during bulk uploads
+- **UX**: Polaris design consistency
+- **Deployment**: Live demo accessible
+
+## Final Deliverables for Charles
+```
+Hi Charles,
+
+Challenge completed! Here are the deliverables:
+
+🚀 **Live Demo**: [Your Vercel URL here]
+📱 **GitHub Repo**: https://github.com/YOUR_USERNAME/file-uploader-challenge
+
+**Features Delivered**:
+✅ React file uploader with queue management
+✅ Max 2-3 concurrent uploads (exactly as requested)
+✅ Drag & drop for dozens of files
+✅ Shopify Polaris UI throughout
+✅ Failed upload retry logic (max 3 attempts)
+✅ Clean TypeScript code with proper interfaces
+✅ Deployed and ready to test
+
+**Time Taken**: [Your actual time] minutes
+**Trade-offs Made**: Mock uploads vs S3 integration for speed
+
+Ready for testing! The live demo handles multiple files with proper queuing.
+
+Best regards,
+[Your name]
+```
+
+Remember: SHIP > PERFECT. Focus on working functionality over polish.
