@@ -26,12 +26,12 @@ Build a React file uploader with queue management, Shopify Polaris UI, and retry
   - [x] `touch src/hooks/useUploadQueue.ts`
   - [x] `touch src/components/uploader/{FileUploader,FileDropZone,FileQueue,FileItem}.tsx`
 
-#### **Task 1.2.5: GitHub Repository Setup** (3 minutes)
-- [ ] Initialize git repository: `git init`
-- [ ] Create initial commit: `git add . && git commit -m "feat: initial project setup with Polaris"`
-- [ ] Create GitHub repository (file-uploader-challenge)
-- [ ] Connect remote: `git remote add origin <repo-url>`
-- [ ] Push initial commit: `git push -u origin main`
+#### **Task 1.2.5: GitHub Repository Setup** (3 minutes) ✅ COMPLETE
+- [x] Initialize git repository: `git init`
+- [x] Create initial commit: `git add . && git commit -m "feat: initial project setup with Polaris"`
+- [x] Create GitHub repository (file-uploader-challenge)
+- [x] Connect remote: `git remote add origin <repo-url>`
+- [x] Push initial commit: `git push -u origin main`
 
 #### **Task 1.3: Setup Polaris App Provider** (4 minutes)
 - [ ] Import Polaris CSS in `src/main.tsx`
