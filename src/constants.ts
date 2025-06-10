@@ -1,7 +1,18 @@
+// API Configuration
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:3001";
+export const API_ENDPOINTS = {
+  upload: "/api/upload",
+  health: "/api/health",
+  progress: "/api/upload/progress",
+  delete: "/api/upload/delete",
+} as const;
+
 // Upload Configuration
 export const MAX_CONCURRENT_UPLOADS = 2;
 export const MAX_RETRY_ATTEMPTS = 3;
 export const RETRY_DELAY_MS = 1000;
+export const UPLOAD_TIMEOUT = 60000; // 60 seconds
 
 // File Validation
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB

@@ -15,7 +15,7 @@ import { formatFileSize } from "../../constants";
 interface FileItemProps {
   file: FileUploadItem;
   onRetry: (fileId: string) => void;
-  onRemove: (fileId: string) => void;
+  onRemove: (fileId: string) => Promise<void>;
 }
 
 export const FileItem: React.FC<FileItemProps> = ({
@@ -77,7 +77,13 @@ export const FileItem: React.FC<FileItemProps> = ({
                 variant="plain"
                 tone="critical"
                 size="micro"
-                onClick={() => onRemove(file.id)}
+                onClick={async () => {
+                  try {
+                    await onRemove(file.id);
+                  } catch (error) {
+                    console.error("Failed to remove file:", error);
+                  }
+                }}
                 accessibilityLabel={`Remove ${file.file.name}`}
                 icon={DeleteIcon}
               />
