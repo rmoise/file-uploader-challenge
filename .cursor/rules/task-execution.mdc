@@ -61,17 +61,17 @@ Build a React file uploader with queue management, Shopify Polaris UI, and retry
 
 ### **PHASE 3: CORE COMPONENTS** (12-18 minutes)
 
-#### **Task 3.1: Create FileDropZone Component** (3 minutes)
-- [ ] Implement drag & drop event handlers
-- [ ] Use Polaris Card component
-- [ ] Add visual feedback for drag states
-- [ ] Handle multiple file selection
+#### **Task 3.1: Create FileDropZone Component** (3 minutes) ✅ COMPLETE
+- [x] Implement drag & drop event handlers
+- [x] Use Polaris Card component
+- [x] Add visual feedback for drag states
+- [x] Handle multiple file selection
 
-#### **Task 3.2: Create FileItem Component** (3 minutes)
-- [ ] Display file name, size, status
-- [ ] Use Polaris ProgressBar for upload progress
-- [ ] Add retry button for failed uploads
-- [ ] Show status badges using Polaris
+#### **Task 3.2: Create FileItem Component** (3 minutes) ✅ COMPLETE
+- [x] Display file name, size, status
+- [x] Use Polaris ProgressBar for upload progress
+- [x] Add retry button for failed uploads
+- [x] Show status badges using Polaris
 
 **⏱️ CHECKPOINT 3 (18 minutes): UI components built**
 
