@@ -33,11 +33,11 @@ Build a React file uploader with queue management, Shopify Polaris UI, and retry
 - [x] Connect remote: `git remote add origin <repo-url>`
 - [x] Push initial commit: `git push -u origin main`
 
-#### **Task 1.3: Setup Polaris App Provider** (4 minutes)
-- [ ] Import Polaris CSS in `src/main.tsx`
-- [ ] Wrap App component with `AppProvider`
-- [ ] Test basic Polaris component (Button) renders
-- [ ] Verify Polaris styles are loading
+#### **Task 1.3: Setup Polaris App Provider** (4 minutes) ✅ COMPLETE
+- [x] Import Polaris CSS in `src/main.tsx`
+- [x] Wrap App component with `AppProvider`
+- [x] Test basic Polaris component (Button) renders
+- [x] Verify Polaris styles are loading
 
 **⏱️ CHECKPOINT 1 (8 minutes): Basic setup complete, Polaris working**
 
@@ -45,15 +45,15 @@ Build a React file uploader with queue management, Shopify Polaris UI, and retry
 
 ### **PHASE 2: TYPE DEFINITIONS & CONSTANTS** (8-12 minutes)
 
-#### **Task 2.1: Define TypeScript Interfaces** (2 minutes)
-- [ ] Create `FileUploadItem` interface in `src/types/upload.ts`
-- [ ] Define upload status types
-- [ ] Export all types
+#### **Task 2.1: Define TypeScript Interfaces** (2 minutes) ✅ COMPLETE
+- [x] Create `FileUploadItem` interface in `src/types/upload.ts`
+- [x] Define upload status types
+- [x] Export all types
 
-#### **Task 2.2: Create Constants** (2 minutes)
-- [ ] Define `MAX_CONCURRENT_UPLOADS = 2` in `src/constants.ts`
-- [ ] Add `MAX_RETRY_ATTEMPTS = 3`
-- [ ] Add file validation constants
+#### **Task 2.2: Create Constants** (2 minutes) ✅ COMPLETE
+- [x] Define `MAX_CONCURRENT_UPLOADS = 2` in `src/constants.ts`
+- [x] Add `MAX_RETRY_ATTEMPTS = 3`
+- [x] Add file validation constants
 
 **⏱️ CHECKPOINT 2 (12 minutes): Types and constants defined**
 
