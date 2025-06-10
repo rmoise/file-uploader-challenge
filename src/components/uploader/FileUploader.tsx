@@ -7,34 +7,22 @@ import {
   InlineStack,
   Badge,
   InlineGrid,
-  Button,
   Banner,
   Box,
-  useBreakpoints,
 } from "@shopify/polaris";
 import { FileDropZone } from "./FileDropZone";
 import { FileQueue } from "./FileQueue";
 import { useUploadQueue } from "../../hooks/useUploadQueue";
 
 export const FileUploader: React.FC = () => {
-  const { smUp } = useBreakpoints();
-
   const uploadQueue = useUploadQueue({
     maxConcurrent: 2,
     maxRetries: 3,
     autoStart: true,
   });
 
-  const {
-    files,
-    isProcessing,
-    stats,
-    startProcessing,
-    stopProcessing,
-    clearCompleted,
-  } = uploadQueue;
+  const { files } = uploadQueue;
   const hasFiles = files.length > 0;
-  const hasFailedFiles = files.some((file) => file.status === "failed");
 
   return (
     <Page title="File Uploader">

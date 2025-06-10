@@ -108,7 +108,7 @@ export class UploadService {
    * Cancel all ongoing uploads
    */
   cancelAllUploads(): void {
-    for (const [fileId, controller] of this.activeUploads) {
+    for (const [, controller] of this.activeUploads) {
       controller.abort();
     }
     this.activeUploads.clear();

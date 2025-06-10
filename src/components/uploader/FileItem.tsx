@@ -7,11 +7,10 @@ import {
   Badge,
   InlineStack,
   BlockStack,
-  Icon,
 } from "@shopify/polaris";
 import { DeleteIcon, RefreshIcon } from "@shopify/polaris-icons";
 import type { FileUploadItem } from "../../types/upload";
-import { formatFileSize, STATUS_MESSAGES } from "../../constants";
+import { formatFileSize } from "../../constants";
 
 interface FileItemProps {
   file: FileUploadItem;

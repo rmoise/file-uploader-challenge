@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import type { FileUploadItem, UploadQueueState } from "../types/upload";
+import type { FileUploadItem } from "../types/upload";
 
 // Simple UUID generator to avoid external dependency
 const generateId = (): string => {
