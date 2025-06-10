@@ -6,123 +6,99 @@ import {
   Card,
   InlineStack,
   Badge,
+  InlineGrid,
+  Button,
+  Banner,
+  Box,
+  useBreakpoints,
 } from "@shopify/polaris";
 import { FileDropZone } from "./FileDropZone";
 import { FileQueue } from "./FileQueue";
 import { useUploadQueue } from "../../hooks/useUploadQueue";
 
-interface FileUploaderProps {
-  title?: string;
-  subtitle?: string;
-  maxConcurrent?: number;
-  maxRetries?: number;
-}
+export const FileUploader: React.FC = () => {
+  const { smUp } = useBreakpoints();
 
-export const FileUploader: React.FC<FileUploaderProps> = ({
-  title = "File Uploader Challenge",
-  subtitle = "React file uploader with queue management and retry logic",
-  maxConcurrent = 2,
-  maxRetries = 3,
-}) => {
   const uploadQueue = useUploadQueue({
-    maxConcurrent,
-    maxRetries,
+    maxConcurrent: 2,
+    maxRetries: 3,
     autoStart: true,
   });
 
-  const { stats, isProcessing } = uploadQueue;
+  const {
+    files,
+    isProcessing,
+    stats,
+    startProcessing,
+    stopProcessing,
+    clearCompleted,
+  } = uploadQueue;
+  const hasFiles = files.length > 0;
+  const hasFailedFiles = files.some((file) => file.status === "failed");
 
   return (
-    <Page title={title} subtitle={subtitle}>
+    <Page title="File Uploader">
       <BlockStack gap="600">
-        {/* Status Overview */}
-        {stats.total > 0 && (
-          <Card>
-            <BlockStack gap="300">
-              <Text variant="headingMd" as="h3">
-                Upload Status
-              </Text>
-              <InlineStack gap="300">
-                <Text as="p">
-                  <strong>Total Files:</strong> {stats.total}
-                </Text>
-                <Text as="p">
-                  <strong>Max Concurrent:</strong> {maxConcurrent}
-                </Text>
-                {isProcessing && (
-                  <Badge tone="attention">Processing Queue</Badge>
-                )}
-                {!isProcessing &&
-                  stats.pending === 0 &&
-                  stats.uploading === 0 && (
-                    <Badge tone="success">Queue Complete</Badge>
-                  )}
-              </InlineStack>
-            </BlockStack>
+        {/* Prominent Header Section */}
+        <Box paddingInlineStart="0" paddingInlineEnd="0">
+          <BlockStack gap="300">
+            <Text variant="headingXl" as="h1" alignment="center">
+              Upload Your Files
+            </Text>
+            <Text tone="subdued" as="p" alignment="center" variant="bodyLg">
+              Drag and drop files to upload them with automatic queue management
+            </Text>
+          </BlockStack>
+        </Box>
+
+        {/* Instructions Banner */}
+        <Banner tone="info">
+          <Text as="p">
+            Drag and drop multiple files or click to select. Maximum 2 files
+            will upload concurrently. Failed uploads will automatically retry up
+            to 3 times.
+          </Text>
+        </Banner>
+
+        {/* Main Content Grid */}
+        <InlineGrid columns={{ xs: "1fr" }} gap="500">
+          {/* Upload Drop Zone */}
+          <Card roundedAbove="sm">
+            <FileDropZone onFilesSelected={uploadQueue.addFiles} />
           </Card>
-        )}
 
-        {/* File Drop Zone */}
-        <FileDropZone onFilesSelected={uploadQueue.addFiles} disabled={false} />
+          {/* File Queue - Only show when there are files */}
+          {hasFiles && (
+            <Card roundedAbove="sm">
+              <FileQueue queue={uploadQueue} />
+            </Card>
+          )}
+        </InlineGrid>
 
-        {/* File Queue */}
-        {stats.total > 0 && <FileQueue queue={uploadQueue} />}
-
-        {/* Instructions */}
-        {stats.total === 0 && (
-          <Card>
-            <BlockStack gap="400">
-              <Text variant="headingMd" as="h3">
-                How to Test the Queue Management
-              </Text>
-              <BlockStack gap="200">
-                <Text as="p">
-                  🔥 <strong>Challenge Features:</strong>
-                </Text>
-                <Text as="p">
-                  • <strong>Drag & drop multiple files</strong> to test queue
-                  management
-                </Text>
-                <Text as="p">
-                  • <strong>Max {maxConcurrent} concurrent uploads</strong> -
-                  watch files queue up!
-                </Text>
-                <Text as="p">
-                  • <strong>Auto-retry failed uploads</strong> (up to{" "}
-                  {maxRetries} attempts)
-                </Text>
-                <Text as="p">
-                  • <strong>Progress tracking</strong> for each file
-                </Text>
-                <Text as="p">
-                  • <strong>Queue controls</strong> - start/stop/clear completed
-                </Text>
-              </BlockStack>
-
-              <Text variant="bodySm" tone="subdued" as="p">
-                💡 Try uploading 10+ files at once to see the queue management
-                in action! Some uploads will randomly fail to demonstrate the
-                retry logic.
-              </Text>
-            </BlockStack>
-          </Card>
-        )}
-
-        {/* Demo Info */}
-        <Card>
-          <BlockStack gap="200">
-            <Text variant="headingSm" as="h4">
+        {/* Demo Information Section */}
+        <Card roundedAbove="sm">
+          <BlockStack gap="400">
+            <Text variant="headingMd" as="h3">
               Demo Information
             </Text>
-            <Text variant="bodySm" as="p">
-              This is a <strong>mock upload system</strong> for demonstration
-              purposes. Files are not actually uploaded to a server - instead,
-              we simulate the upload process with progress tracking and random
-              failures (~20% failure rate) to test the retry logic.
+            <Text as="p" variant="bodyMd">
+              This is a demonstration file uploader with queue management and
+              retry logic. Files are uploaded using a mock service with ~80%
+              success rate to simulate real-world upload failures and retry
+              scenarios.
             </Text>
-            <Text variant="bodySm" as="p">
-              In a production environment, this would upload to S3, Digital
-              Ocean Spaces, or another cloud storage service.
+            <Box>
+              <InlineStack gap="200" wrap>
+                <Badge>React + TypeScript</Badge>
+                <Badge>Shopify Polaris UI</Badge>
+                <Badge>Queue Management</Badge>
+                <Badge>Auto Retry Logic</Badge>
+              </InlineStack>
+            </Box>
+            <Text as="p" variant="bodyMd" tone="subdued">
+              Built for the Upwork file uploader challenge. Test with 10+ files
+              to see concurrent upload limiting and retry functionality in
+              action.
             </Text>
           </BlockStack>
         </Card>

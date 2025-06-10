@@ -57,8 +57,21 @@ export const useUploadQueue = (
   const [uploading, setUploading] = useState<Set<string>>(new Set());
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Use refs to avoid stale closures - Following Context7 pattern
+  const filesRef = useRef<FileUploadItem[]>([]);
+  const uploadingRef = useRef<Set<string>>(new Set());
   const processingRef = useRef(false);
   const retryTimeoutsRef = useRef<Map<string, number>>(new Map());
+  const processingTimeoutRef = useRef<number | null>(null);
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    filesRef.current = files;
+  }, [files]);
+
+  useEffect(() => {
+    uploadingRef.current = uploading;
+  }, [uploading]);
 
   // Add files to the queue
   const addFiles = useCallback(
@@ -140,6 +153,12 @@ export const useUploadQueue = (
     processingRef.current = false;
     uploadService.cancelAllUploads();
 
+    // Clear processing timeout
+    if (processingTimeoutRef.current) {
+      clearTimeout(processingTimeoutRef.current);
+      processingTimeoutRef.current = null;
+    }
+
     // Clear all retry timeouts
     retryTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
     retryTimeoutsRef.current.clear();
@@ -147,51 +166,15 @@ export const useUploadQueue = (
     setUploading(new Set());
   }, []);
 
-  // Process the upload queue
-  const processQueue = useCallback(async () => {
-    if (!isProcessing || processingRef.current) return;
-
-    processingRef.current = true;
-
-    while (processingRef.current && isProcessing) {
-      // Get pending files
-      const pendingFiles = files.filter((file) => file.status === "pending");
-
-      // Get currently uploading count
-      const currentlyUploading = uploading.size;
-
-      // Calculate how many more uploads we can start
-      const availableSlots = maxConcurrent - currentlyUploading;
-
-      if (availableSlots <= 0 || pendingFiles.length === 0) {
-        // No slots available or no pending files
-        if (currentlyUploading === 0 && pendingFiles.length === 0) {
-          // All done
-          break;
-        }
-        // Wait a bit before checking again
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        continue;
-      }
-
-      // Start uploads for available slots
-      const filesToUpload = pendingFiles.slice(0, availableSlots);
-
-      for (const file of filesToUpload) {
-        uploadFile(file);
-      }
-
-      // Wait a bit before next iteration
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-
-    processingRef.current = false;
-    setIsProcessing(false);
-  }, [files, uploading, isProcessing, maxConcurrent]);
-
-  // Upload a single file
+  // Upload a single file - Use function references to avoid stale closures
   const uploadFile = useCallback(
-    async (file: FileUploadItem) => {
+    async (fileId: string) => {
+      // Use refs to get current state - Following Context7 pattern for avoiding stale closures
+      const currentFiles = filesRef.current;
+      const file = currentFiles.find((f) => f.id === fileId);
+
+      if (!file) return;
+
       // Mark as uploading
       setUploading((prev) => new Set([...prev, file.id]));
       setFiles((prev) =>
@@ -236,9 +219,9 @@ export const useUploadQueue = (
             )
           );
         } else {
-          // Handle failure
-          const updatedFile = files.find((f) => f.id === file.id);
-          const retryCount = (updatedFile?.retryCount || 0) + 1;
+          // Handle failure - Use current state via refs
+          const currentFile = filesRef.current.find((f) => f.id === file.id);
+          const retryCount = (currentFile?.retryCount || 0) + 1;
 
           if (retryCount < maxRetries) {
             // Schedule retry
@@ -259,7 +242,7 @@ export const useUploadQueue = (
             // Schedule retry after delay
             const timeout = setTimeout(() => {
               retryTimeoutsRef.current.delete(file.id);
-              // Retry will be picked up by the queue processor
+              // Queue will pick this up automatically
             }, retryDelay);
 
             retryTimeoutsRef.current.set(file.id, timeout);
@@ -303,8 +286,54 @@ export const useUploadQueue = (
         );
       }
     },
-    [files, maxRetries, retryDelay]
+    [maxRetries, retryDelay]
   );
+
+  // Process the upload queue - Stable function without state dependencies
+  const processQueue = useCallback(async () => {
+    if (!isProcessing || processingRef.current) return;
+
+    processingRef.current = true;
+
+    const processLoop = async () => {
+      // Use refs to get current state - Following Context7 pattern
+      const currentFiles = filesRef.current;
+      const currentUploading = uploadingRef.current;
+
+      // Get pending files
+      const pendingFiles = currentFiles.filter(
+        (file) => file.status === "pending"
+      );
+
+      // Calculate how many more uploads we can start
+      const availableSlots = maxConcurrent - currentUploading.size;
+
+      if (availableSlots > 0 && pendingFiles.length > 0) {
+        // Start uploads for available slots
+        const filesToUpload = pendingFiles.slice(0, availableSlots);
+
+        for (const file of filesToUpload) {
+          uploadFile(file.id);
+        }
+      }
+
+      // Check if we should continue processing
+      if (processingRef.current && isProcessing) {
+        const hasWork = pendingFiles.length > 0 || currentUploading.size > 0;
+
+        if (hasWork) {
+          // Schedule next check
+          processingTimeoutRef.current = setTimeout(processLoop, 100);
+        } else {
+          // All done
+          processingRef.current = false;
+          setIsProcessing(false);
+        }
+      }
+    };
+
+    processLoop();
+  }, [isProcessing, maxConcurrent, uploadFile]);
 
   // Start queue processing when isProcessing changes
   useEffect(() => {
@@ -322,10 +351,16 @@ export const useUploadQueue = (
     failed: files.filter((f) => f.status === "failed").length,
   };
 
-  // Cleanup on unmount
+  // Cleanup on unmount - Following Context7 cleanup pattern
   useEffect(() => {
     return () => {
+      processingRef.current = false;
       uploadService.cancelAllUploads();
+
+      if (processingTimeoutRef.current) {
+        clearTimeout(processingTimeoutRef.current);
+      }
+
       retryTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
       retryTimeoutsRef.current.clear();
     };

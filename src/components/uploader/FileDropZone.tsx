@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Card, Text, Button, BlockStack, Icon } from "@shopify/polaris";
+import { Text, Button, BlockStack, Icon } from "@shopify/polaris";
 import { UploadIcon } from "@shopify/polaris-icons";
 
 interface FileDropZoneProps {
@@ -73,53 +73,57 @@ export const FileDropZone: React.FC<FileDropZoneProps> = ({
   }, [disabled]);
 
   return (
-    <Card>
-      <div
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onClick={handleClick}
-        style={{
-          padding: "2rem",
-          textAlign: "center",
-          border: isDragActive
-            ? "2px dashed var(--p-color-border-brand)"
-            : "2px dashed var(--p-color-border-subdued)",
-          borderRadius: "var(--p-border-radius-200)",
-          backgroundColor: isDragActive
-            ? "var(--p-color-surface-brand-subdued)"
-            : "var(--p-color-surface)",
-          cursor: disabled ? "not-allowed" : "pointer",
-          opacity: disabled ? 0.6 : 1,
-          transition: "all 0.2s ease",
-        }}
-      >
-        <BlockStack gap="400" align="center">
-          <Icon source={UploadIcon} tone={isDragActive ? "info" : "subdued"} />
-          <BlockStack gap="200" align="center">
-            <Text variant="headingMd" as="h3">
-              {isDragActive ? "Drop files here" : "Upload files"}
-            </Text>
-            <Text tone="subdued" as="p">
-              Drag and drop files here, or click to select files
-            </Text>
-            <Text tone="subdued" variant="bodySm" as="p">
-              Multiple files supported
-            </Text>
-          </BlockStack>
-          {!isDragActive && <Button disabled={disabled}>Choose Files</Button>}
+    <div
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      onClick={handleClick}
+      style={{
+        cursor: disabled ? "not-allowed" : "pointer",
+        opacity: disabled ? 0.6 : 1,
+        border: isDragActive ? "3px dashed #0070f3" : "2px dashed #b3d4fc",
+        borderRadius: "12px",
+        backgroundColor: isDragActive ? "#e6f3ff" : "#f0f8ff",
+        transition: "all 0.2s ease",
+        padding: "2rem",
+        minHeight: "160px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <BlockStack gap="400" align="center">
+        {/* Clean Upload Icon */}
+        <Icon source={UploadIcon} tone={isDragActive ? "info" : "subdued"} />
+
+        {/* Minimal Text Hierarchy */}
+        <BlockStack gap="100" align="center">
+          <Text variant="headingMd" as="h3" alignment="center">
+            {isDragActive ? "Drop files here" : "Upload files"}
+          </Text>
+          <Text tone="subdued" as="p" alignment="center">
+            Drag & drop or click to browse
+          </Text>
         </BlockStack>
 
-        <input
-          id="file-input"
-          type="file"
-          multiple
-          onChange={handleFileSelect}
-          style={{ display: "none" }}
-          disabled={disabled}
-        />
-      </div>
-    </Card>
+        {/* Simple CTA Button */}
+        {!isDragActive && (
+          <Button variant="primary" disabled={disabled}>
+            Choose files
+          </Button>
+        )}
+      </BlockStack>
+
+      {/* Hidden File Input */}
+      <input
+        id="file-input"
+        type="file"
+        multiple
+        onChange={handleFileSelect}
+        style={{ display: "none" }}
+        disabled={disabled}
+      />
+    </div>
   );
 };
