@@ -4,8 +4,6 @@ import {
   BlockStack,
   Text,
   Card,
-  InlineStack,
-  Badge,
   InlineGrid,
   Banner,
   Box,
