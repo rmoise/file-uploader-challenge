@@ -62,34 +62,6 @@ export const FileUploader: React.FC = () => {
             </Card>
           )}
         </InlineGrid>
-
-        {/* Demo Information Section */}
-        <Card roundedAbove="sm">
-          <BlockStack gap="400">
-            <Text variant="headingMd" as="h3">
-              Demo Information
-            </Text>
-            <Text as="p" variant="bodyMd">
-              This is a demonstration file uploader with queue management and
-              retry logic. Files are uploaded using a mock service with ~80%
-              success rate to simulate real-world upload failures and retry
-              scenarios.
-            </Text>
-            <Box>
-              <InlineStack gap="200" wrap>
-                <Badge>React + TypeScript</Badge>
-                <Badge>Shopify Polaris UI</Badge>
-                <Badge>Queue Management</Badge>
-                <Badge>Auto Retry Logic</Badge>
-              </InlineStack>
-            </Box>
-            <Text as="p" variant="bodyMd" tone="subdued">
-              Built for the Upwork file uploader challenge. Test with 10+ files
-              to see concurrent upload limiting and retry functionality in
-              action.
-            </Text>
-          </BlockStack>
-        </Card>
       </BlockStack>
     </Page>
   );
