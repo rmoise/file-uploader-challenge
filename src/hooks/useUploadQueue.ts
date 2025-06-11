@@ -49,7 +49,7 @@ export const useUploadQueue = (
   const {
     maxConcurrent = MAX_CONCURRENT_UPLOADS,
     maxRetries = MAX_RETRY_ATTEMPTS,
-    retryDelay = RETRY_DELAY_MS,
+    retryDelay: _retryDelay = RETRY_DELAY_MS, // Prefix with _ to indicate intentionally unused
     autoStart = true,
   } = options;
 

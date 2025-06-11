@@ -266,7 +266,7 @@ export class UploadService {
    * Cancel all ongoing uploads
    */
   cancelAllUploads(): void {
-    for (const [fileId, xhr] of this.activeUploads) {
+    for (const [_fileId, xhr] of this.activeUploads) {
       xhr.abort();
     }
     this.activeUploads.clear();
